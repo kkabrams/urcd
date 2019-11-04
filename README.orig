@@ -1,0 +1,92 @@
+URCd:
+ 10,000 genomes of human lizard hybrid soldiers being sent server to server
+ between Angola and Luxembourg with some 70's style casual sex peering
+ arrangement.
+
+ if you want a real description view doc/*
+
+depends:
+ NaCl or libsodium, libtai, ucspi-tcp,
+ python(>=2.6), python-dev(>=2.6),
+ daemontools, sh, gcc
+
+ your clock needs to be as reasonably accurate, possibly by using something like
+ ntp, otherwise your messages could be dropped from the network.
+
+recommends:
+ NaCl instead of libsodium,
+ cython(>=0.18.0)
+
+install:
+ # install dependencies, if you haven't already:
+ ./install-daemontools.sh
+ ./install-ucspi-tcp.sh
+
+ # URCd with ssl.
+ # if you actually get it to work let me know :-/
+ # depends on openssl, libssl-dev, perl, libperl-dev
+ ./install-ucspi-ssl.sh
+
+ # this also patches libtai for 64-bit shared objects
+ ./install-libtai.sh
+
+ # recommended over ./install-libsodium.sh:
+ ./install-nacl.sh
+
+ # OpenBSD:
+ echo '-ftrampolines' > conf-cc
+
+ ./Make.sh
+
+ # edit the network/hostmask
+ $editor env/serv
+
+ # edit the motd
+ $editor env/motd
+
+ ln -s `pwd` /service/urcd
+
+ echo "`pwd`/urc.db" > env/URCDB
+ svstat /service/urcd
+
+ ### create your urchub, you only need to do this once
+ ./scripts/add-urchub
+
+CryptoServ:
+ ln -s stdin.cryptoserv stdin
+
+hub2hub:
+ ./scripts/add-hublisten local.urc.example.tld 6789 /service/urcd-hub0/socket/
+
+ ### add peers. i recommend between 2 and 4 at the most
+ ./scripts/add-hubconnect remote.urc.example.tld 6789 /service/urcd-hub0/socket/
+
+no censorship (security):
+ URC networks are censorship resistant. i recommend URCSIGN and/or URCCRYPTOBOX
+ to ignore spam and trolls. URCd will replace the user field with VERIFIED-Nick
+ for users with valid authentication or signature verification. All other user
+ fields will be replaced with URCD-Nick. e.g.:
+
+ Nick!URCD-Nick@server
+ Nick!VERIFIED-Nick@server
+
+ irssi ("ban/except"):
+  /ignore *!*@* ALL
+  /ignore -except friend!*@* ALL
+  /ignore -except *!VERIFIED-*@* ALL
+
+ xchat ("ban/except"):
+  /ignore *!*@* ALL
+  /ignore friend!*@* ALL UNIGNORE
+  /ignore *!VERIFIED-*@* ALL UNIGNORE
+
+Contact:
+ Joseph S. Williams, yhpargotpyrc at gmail. Please write URCd in the subject
+ so that I will notice it and not accidentally delete it or mark it as spam.
+
+Thanks:
+ Thank you for using URCd. If you appreciate this project, please consider
+ running a public URC hub, or sending a small donation. Like other darknets,
+ URC is a stronger, safer network the more people that actively participate
+ in building reliable nodes. Small donations help me financially, thus giving
+ me more time to focus on this project.
