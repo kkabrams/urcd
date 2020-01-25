@@ -20,6 +20,8 @@ import sys
 import re
 import os
 
+os.chdir("/".join(os.path.realpath(sys.argv[0]).split("/")[:-1]))
+
 RE = 'a-zA-Z0-9^(\)\-_{\}[\]|\\\\'
 re_USER = re.compile('!\S+@',re.IGNORECASE).sub
 re_SPLIT = re.compile(' +:?',re.IGNORECASE).split
